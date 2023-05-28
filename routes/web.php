@@ -26,6 +26,7 @@ Route::post('/dropzone', 'ProductController@storeProductImage')->name('file-uplo
 Route::middleware('auth')->group(function () {
     Route::resource('product-variant', 'VariantController');
     Route::resource('product', 'ProductController');
+    Route::resource('product/index', 'ProductController');
     Route::resource('blog', 'BlogController');
     Route::resource('blog-category', 'BlogCategoryController');
 });

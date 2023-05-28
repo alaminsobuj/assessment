@@ -17,15 +17,35 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with([
+        // $query = Product::query();
+        $query = Product::with([
             'productVariantPrices',
             'productVariantPrices.productVariantOne',
             'productVariantPrices.productVariantTwo',
             'productVariantPrices.productVariantThree'
-        ])->get();
-        
+        ]);
+
+          // Apply filters if provided
+        if (!empty($request->title)) {
+            $query->where('title','like', '%' . $request->input('title') . '%');
+        }elseif(!empty($request->date)) {
+            $fromDate = $request->date;
+            $query->whereDate('created_at', $fromDate);
+        }elseif(!empty($request->price_from)){
+            $fromPrice = $request->price_from;
+            $query->whereHas('productVariantPrices', function ($q) use ($fromPrice) {
+                $q->where('price', '>=', $fromPrice);
+            });
+        }elseif(!empty($request->price_to)){
+            $toPrice = $request->price_to;
+            $query->whereHas('productVariantPrices', function ($q) use ($toPrice) {
+                $q->where('price', '<=', $toPrice);
+            });
+        }
+
+        $products = $query->paginate(10);
         
         return view('products.index', compact('products'));
     }
@@ -144,6 +164,8 @@ class ProductController extends Controller
      */
     public function show($product)
     {
+
+
     }
 
     /**

@@ -8,16 +8,16 @@
 
 
     <div class="card">
-        <form action="" method="get" class="card-header">
+        <form action="{{ route('product.index') }}" method="get" class="card-header">
             <div class="form-row justify-content-between">
                 <div class="col-md-2">
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
-                <div class="col-md-2">
+                <!-- <div class="col-md-2">
                     <select name="variant" id="" class="form-control">
 
                     </select>
-                </div>
+                </div> -->
 
                 <div class="col-md-3">
                     <div class="input-group">
@@ -55,7 +55,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $product->title }} <br> Created at : {{ date('d-M-Y', strtotime($product->created_at)) }}</td>
-                                <td>{{ $product->description }}</td>
+                                <td>{{ Illuminate\Support\Str::limit($product->description,20) }}</td>
                                 <td>
                                     <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
                                         @foreach ($product->productVariantPrices as $variant)
@@ -79,7 +79,7 @@
                                 </td>
                             </tr>
                         @endforeach
-
+                       
                     </tbody>
 
                 </table>
@@ -90,10 +90,11 @@
         <div class="card-footer">
             <div class="row justify-content-between">
                 <div class="col-md-6">
-                    <p>Showing 1 to 10 out of 100</p>
+
+                    <p>Showing {{ $products ->firstItem() }} to {{$products ->lastItem()}} out of {{$products->total()}}</p>
                 </div>
                 <div class="col-md-2">
-
+                {{ $products->links() }}
                 </div>
             </div>
         </div>
