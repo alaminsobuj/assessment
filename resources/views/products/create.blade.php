@@ -5,6 +5,8 @@
         <h1 class="h3 mb-0 text-gray-800">Create Product</h1>
     </div>
     <form action="{{ route('product.store') }}" method="post" autocomplete="off" spellcheck="false">
+        @csrf
+
         <section>
             <div class="row">
                 <div class="col-md-6">
@@ -47,6 +49,7 @@
                         <div class="card-body border">
                             <div id="file-upload" class="dropzone dz-clickable">
                                 <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
+                                <input type="hidden" name="files" id="uploaded_files" value="[]">
                             </div>
                         </div>
                     </div>
@@ -87,12 +90,16 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-lg btn-primary">Save</button>
+            <button type="submit" class="btn btn-lg btn-primary">Save</button>
             <button type="button" class="btn btn-secondary btn-lg">Cancel</button>
         </section>
     </form>
 @endsection
 
 @push('page_js')
+    <script type="text/javascript" async>
+        var fileUploadUrl = "{{ route('file-upload') }}",
+            csrfToken = $('input[name=_token]').val();
+    </script>
     <script type="text/javascript" src="{{ asset('js/product.js') }}"></script>
 @endpush

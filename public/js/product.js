@@ -4,15 +4,36 @@ var indexs = [];
 
 $(document).ready(function () {
     addVariantTemplate();
+    
     $("#file-upload").dropzone({
-        url: "{{ route('file-upload') }}",
+        url: fileUploadUrl,
         method: "post",
         addRemoveLinks: true,
+        sending: function(file, xhr, formData) {
+            formData.append("_token", csrfToken);
+        },        
         success: function (file, response) {
-            //
+            var $uploadedInput = $('#uploaded_files'),
+                existing = JSON.parse($uploadedInput.val());
+            
+            existing.push(response.success);
+            $uploadedInput.val(JSON.stringify(existing));
+        },
+        removedfile: function (file) {
+            var $uploadedInput = $('#uploaded_files'),
+                existing = JSON.parse($uploadedInput.val()),
+                removedFie = file.name,
+                index = existing.indexOf(removedFie);
+            
+            if (index > -1) {
+                existing.splice(index, 1);
+                $uploadedInput.val(JSON.stringify(existing));
+            }
+
+            file.previewElement.remove();
         },
         error: function (file, response) {
-            //
+            console.log(response);
         }
     });
 });
