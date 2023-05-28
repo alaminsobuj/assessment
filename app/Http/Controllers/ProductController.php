@@ -45,7 +45,7 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->paginate(10);
+        $products = $query->paginate(5);
         
         return view('products.index', compact('products'));
     }
