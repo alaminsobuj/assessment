@@ -6,18 +6,25 @@
         <h1 class="h3 mb-0 text-gray-800">Products</h1>
     </div>
 
-
+{{-- {{ dd($variant)}} --}}
     <div class="card">
         <form action="{{ route('product.index') }}" method="get" class="card-header">
             <div class="form-row justify-content-between">
                 <div class="col-md-2">
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
-                <!-- <div class="col-md-2">
+               <div class="col-md-2">
                     <select name="variant" id="" class="form-control">
-
+                      <option>Select A Variant</option>
+                      @foreach($variant as  $variantlist)
+                      <optgroup label="{{ $variantlist->title}}">
+                        @foreach($variantlist->productVariants as $attr)
+                        <option value="volvo">{{$attr->variant}}</option>
+                        @endforeach
+                      </optgroup>
+                      @endforeach
                     </select>
-                </div> -->
+                </div>
 
                 <div class="col-md-3">
                     <div class="input-group">

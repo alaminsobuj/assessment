@@ -19,6 +19,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        // return $request->all();
+
         // $query = Product::query();
         $query = Product::with([
             'productVariantPrices',
@@ -26,14 +28,19 @@ class ProductController extends Controller
             'productVariantPrices.productVariantTwo',
             'productVariantPrices.productVariantThree'
         ]);
-
+        
           // Apply filters if provided
         if (!empty($request->title)) {
             $query->where('title','like', '%' . $request->input('title') . '%');
         }elseif(!empty($request->date)) {
             $fromDate = $request->date;
             $query->whereDate('created_at', $fromDate);
-        }elseif(!empty($request->price_from)){
+        }elseif(!empty($request->price_from) && !empty($request->price_to)){
+            $fromPrice = $request->price_from;
+            $query->whereHas('productVariantPrices', function ($q) use ($fromPrice) {
+                $q->where('price', '>=', $fromPrice);
+            });
+         }elseif(!empty($request->price_from)){
             $fromPrice = $request->price_from;
             $query->whereHas('productVariantPrices', function ($q) use ($fromPrice) {
                 $q->where('price', '>=', $fromPrice);
@@ -46,9 +53,14 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(5);
-        
-        
-        return view('products.index', compact('products'));
+        // $variant=Product::with(['productvariants'=>function($variant){
+        //   $variant->select(['variant','variant_id','product_id']);
+        // }])->select(['title','id'])->get();
+        // ->toArray()
+
+        $variant=Variant::with('productVariants')->get();
+        //  dd($variant);
+        return view('products.index', compact('products','variant'));
     }
 
     /**
